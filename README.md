@@ -1,12 +1,12 @@
 # Martini
 
 [![GoDoc](https://godoc.org/github.com/straightdave/martini?status.png)](http://godoc.org/github.com/straightdave/martini)
+[![Build Status](https://travis-ci.org/straightdave/martini.svg?branch=master)](https://travis-ci.org/straightdave/martini)
 
 > **NOTE**
 >
-> Forked from `github.com/straightdave/martini` which has magical powers to help
-> writing HTTP services quickly and effectively.
-> Its original repo is not maintained.
+> Forked from `github.com/go-martini/martini` which has magical powers when writing HTTP services.
+> The original repo is not maintained.
 
 > ** Update 2020-07-09 **
 >
@@ -29,44 +29,43 @@ Language Translations:
 
 ## Getting Started
 
-After installing Go and setting up your [GOPATH](http://golang.org/doc/code.html#GOPATH), create your first `.go` file. We'll call it `server.go`.
+Traditionally, download the package like this:
+```bash
+go get github.com/straightdave/martini
+```
 
-~~~ go
+And import it into your code:
+
+```go
 package main
 
 import "github.com/straightdave/martini"
 
 func main() {
-  m := martini.Classic()
-  m.Get("/", func() string {
-    return "Hello world!"
-  })
-  m.Run()
+    m := martini.Classic()
+    m.Get("/", func() string {
+        return "Hello world!"
+    })
+    m.Run()
 }
-~~~
-
-Then install the Martini package (**go 1.1** or greater is required):
-~~~
-go get github.com/straightdave/martini
-~~~
+```
 
 Then run your server:
-~~~
+```bash
 go run server.go
-~~~
+```
 
 You will now have a Martini webserver running on `localhost:3000`.
 
-## Getting Help
-
-Join the [Mailing list](https://groups.google.com/forum/#!forum/martini-go)
-
-Watch the [Demo Video](http://martini.codegangsta.io/#demo)
-
-Ask questions on Stackoverflow using the [martini tag](http://stackoverflow.com/questions/tagged/martini)
-
-GoDoc [documentation](http://godoc.org/github.com/straightdave/martini)
-
+> *Go Mod Supported*
+>
+> This martini is now GoMod-rized. You can start your project anywhere as long as your init your code as a Go Mod
+> ```
+> my-server-dir$ go mod init <my-server-package-name>
+> my-server-dir$ go get
+> ```
+> This will download and import Martini as a GoMod, rather than a normal package at the GOPATH/src. For details please
+> read materials about GoMod.
 
 ## Features
 * Extremely simple to use.
@@ -90,16 +89,17 @@ For more middleware and functionality, check out the repositories in the  [marti
   * [Serving Static Files](#serving-static-files)
 * [Middleware Handlers](#middleware-handlers)
   * [Next()](#next)
+  * [Break()](#break)
 * [Martini Env](#martini-env)
 * [FAQ](#faq)
 
 ## Classic Martini
 To get up and running quickly, [martini.Classic()](http://godoc.org/github.com/straightdave/martini#Classic) provides some reasonable defaults that work well for most web applications:
-~~~ go
-  m := martini.Classic()
-  // ... middleware and routing goes here
-  m.Run()
-~~~
+```go
+    m := martini.Classic()
+    // ... middleware and routing goes here
+    m.Run()
+```
 
 Below is some of the functionality [martini.Classic()](http://godoc.org/github.com/straightdave/martini#Classic) pulls in automatically:
   * Request/Response Logging - [martini.Logger](http://godoc.org/github.com/straightdave/martini#Logger)
@@ -114,6 +114,45 @@ m.Get("/", func() {
   println("hello world")
 })
 ~~~
+This code defines only one handler for route "/", this handler's also called _router action_. Router action
+has no difference among handlers, but the last one to execute for such requests.
+To make it meaningful, you have to provide at least one handler for a reuqest route.
+
+#### Handler stack
+
+There are several ways to define handler stacks:
+
+**Per each request**
+```go
+m.Get("/", handler1, handler2, ..., handlerN, func() {
+    // I am the final handler, a.k.a router action.
+    // handler1, handler2, ... handlerN are used as middlewares, stacked with order.
+})
+```
+Requests to the route `/` will be handled from _handler1_ to _handlerN_, then at last, the final one `func() { ...}`, which is also called _route action_.
+
+**Globally**
+```go
+m.Use(hander1)
+m.Use(handler2)
+...
+m.Use(handlerN)
+
+/* or
+m.Handlers(
+  handler1,
+  handler2,
+  ...,
+  handlerN,
+)
+*/
+
+m.Get("/", homeHandler)
+m.Get("/about", aboutHandler)
+```
+In this case, all requests (no matter to `/` or `/about`) will be handled by _handler1_, _handler2_, ..., _handlerN_ before the last route action.
+
+The handlers (here _handler1_, _handler2_, ..., _handlerN_) are also called **middleware**. This topic would be discussed in detail later.
 
 #### Return Values
 If a handler returns something, Martini will write the result to the current [http.ResponseWriter](http://godoc.org/net/http#ResponseWriter) as a string:
@@ -135,8 +174,9 @@ Handlers are invoked via reflection. Martini makes use of *Dependency Injection*
 
 If you add an argument to your Handler, Martini will search its list of services and attempt to resolve the dependency via type assertion:
 ~~~ go
-m.Get("/", func(res http.ResponseWriter, req *http.Request) { // res and req are injected by Martini
-  res.WriteHeader(200) // HTTP 200
+m.Get("/", func(res http.ResponseWriter, req *http.Request, conn myDBConn) { // res and req are injected by Martini
+    conn.Save( ... somethig ...)
+    res.WriteHeader(200) // HTTP 200
 })
 ~~~
 
@@ -187,7 +227,7 @@ matches the request is invoked.
 
 Route patterns may include named parameters, accessible via the [martini.Params](http://godoc.org/github.com/straightdave/martini#Params) service:
 ~~~ go
-m.Get("/hello/:name", func(params martini.Params) string {
+m.Get("/hello/:name", func(params martini.Params) string { // martini.Params is injected by default
   return "Hello " + params["name"]
 })
 ~~~
@@ -252,7 +292,7 @@ Mapping on the request level can be done in a handler via [martini.Context](http
 ~~~ go
 func MyCustomLoggerHandler(c martini.Context, req *http.Request) {
   logger := &MyCustomLogger{req}
-  c.Map(logger) // mapped as *MyCustomLogger
+  c.Map(logger) // mapped as *MyCustomLogger, which is usable in the next handlers in stack including router action.
 }
 ~~~
 
