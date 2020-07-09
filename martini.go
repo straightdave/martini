@@ -127,6 +127,8 @@ type Context interface {
 	// the other Handlers have been executed. This works really well for any operations that must
 	// happen after an http request
 	Next()
+	// Break is an optional function that Middleware Handlers can call to break current handler stack (including router).
+	Break()
 	// Written returns whether or not the response for this context has been written.
 	Written() bool
 }
@@ -151,6 +153,12 @@ func (c *context) handler() Handler {
 
 func (c *context) Next() {
 	c.index++
+	c.run()
+}
+
+func (c *context) Break() {
+	// skip other handlers plus one possible action
+	c.index = len(c.handlers) + 1
 	c.run()
 }
 

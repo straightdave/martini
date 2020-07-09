@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Test_Routing(t *testing.T) {
+func TestRouting(t *testing.T) {
 	router := NewRouter()
 	recorder := httptest.NewRecorder()
 
@@ -136,7 +136,7 @@ func Test_Routing(t *testing.T) {
 	expect(t, recorder.Body.String(), "404 page not found\n")
 }
 
-func Test_RouterHandlerStatusCode(t *testing.T) {
+func TestRouterHandlerStatusCode(t *testing.T) {
 	router := NewRouter()
 	router.Get("/foo", func() string {
 		return "foo"
@@ -195,7 +195,7 @@ func Test_RouterHandlerStatusCode(t *testing.T) {
 	expect(t, recorder.Body.String(), "Interface!")
 }
 
-func Test_RouterHandlerStacking(t *testing.T) {
+func TestRouterHandlerStacking(t *testing.T) {
 	router := NewRouter()
 	recorder := httptest.NewRecorder()
 
@@ -249,7 +249,7 @@ var routeTests = []struct {
 	{"HEAD", "/foo/123/bat/321/", OverloadMatch, map[string]string{"bar": "123", "baz": "321"}},
 }
 
-func Test_RouteMatching(t *testing.T) {
+func TestRouteMatching(t *testing.T) {
 	route := newRoute("GET", "/foo/:bar/bat/:baz", nil)
 	for _, tt := range routeTests {
 		match, params := route.Match(tt.method, tt.path)
@@ -259,7 +259,7 @@ func Test_RouteMatching(t *testing.T) {
 	}
 }
 
-func Test_MethodsFor(t *testing.T) {
+func TestMethodsFor(t *testing.T) {
 	router := NewRouter()
 	recorder := httptest.NewRecorder()
 
@@ -290,7 +290,7 @@ func Test_MethodsFor(t *testing.T) {
 	expect(t, recorder.Header().Get("Allow"), "GET,PUT")
 }
 
-func Test_NotFound(t *testing.T) {
+func TestNotFound(t *testing.T) {
 	router := NewRouter()
 	recorder := httptest.NewRecorder()
 
@@ -306,7 +306,7 @@ func Test_NotFound(t *testing.T) {
 	expect(t, recorder.Body.String(), "Nope\n")
 }
 
-func Test_NotFoundAsHandler(t *testing.T) {
+func TestNotFoundAsHandler(t *testing.T) {
 	router := NewRouter()
 	recorder := httptest.NewRecorder()
 
@@ -346,7 +346,7 @@ func Test_NotFoundAsHandler(t *testing.T) {
 	expect(t, recorder.Body.String(), "")
 }
 
-func Test_NotFoundStacking(t *testing.T) {
+func TestNotFoundStacking(t *testing.T) {
 	router := NewRouter()
 	recorder := httptest.NewRecorder()
 
@@ -381,7 +381,7 @@ func Test_NotFoundStacking(t *testing.T) {
 	expect(t, recorder.Body.String(), "Not Found")
 }
 
-func Test_Any(t *testing.T) {
+func TestAny(t *testing.T) {
 	router := NewRouter()
 	router.Any("/foo", func(res http.ResponseWriter) {
 		http.Error(res, "Nope", http.StatusNotFound)
@@ -404,7 +404,7 @@ func Test_Any(t *testing.T) {
 	expect(t, recorder.Body.String(), "Nope\n")
 }
 
-func Test_URLFor(t *testing.T) {
+func TestURLFor(t *testing.T) {
 	router := NewRouter()
 
 	router.Get("/foo", func() {
@@ -434,7 +434,7 @@ func Test_URLFor(t *testing.T) {
 	router.Handle(recorder, req, context)
 }
 
-func Test_AllRoutes(t *testing.T) {
+func TestAllRoutes(t *testing.T) {
 	router := NewRouter()
 
 	patterns := []string{"/foo", "/fee", "/fii"}
@@ -452,7 +452,7 @@ func Test_AllRoutes(t *testing.T) {
 	}
 }
 
-func Test_ActiveRoute(t *testing.T) {
+func TestActiveRoute(t *testing.T) {
 	router := NewRouter()
 
 	router.Get("/foo", func(r Route) {

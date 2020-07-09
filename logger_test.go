@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func Test_Logger(t *testing.T) {
+func TestLogger(t *testing.T) {
 	buff := bytes.NewBufferString("")
 	recorder := httptest.NewRecorder()
 

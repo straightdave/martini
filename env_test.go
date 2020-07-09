@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func Test_SetENV(t *testing.T) {
+func TestSetENV(t *testing.T) {
 	tests := []struct {
 		in  string
 		out string
@@ -21,7 +21,7 @@ func Test_SetENV(t *testing.T) {
 	}
 }
 
-func Test_Root(t *testing.T) {
+func TestRoot(t *testing.T) {
 	if len(Root) == 0 {
 		t.Errorf("Expected root path will be set")
 	}

@@ -20,23 +20,23 @@ func refute(t *testing.T, a interface{}, b interface{}) {
 	}
 }
 
-func Test_New(t *testing.T) {
+func TestNew(t *testing.T) {
 	m := New()
 	if m == nil {
 		t.Error("martini.New() cannot return nil")
 	}
 }
 
-func Test_Martini_RunOnAddr(t *testing.T) {
+func TestMartiniRunOnAddr(t *testing.T) {
 	// just test that Run doesn't bomb
 	go New().RunOnAddr("127.0.0.1:8080")
 }
 
-func Test_Martini_Run(t *testing.T) {
+func TestMartiniRun(t *testing.T) {
 	go New().Run()
 }
 
-func Test_Martini_ServeHTTP(t *testing.T) {
+func TestMartiniServeHTTP(t *testing.T) {
 	result := ""
 	response := httptest.NewRecorder()
 
@@ -62,7 +62,7 @@ func Test_Martini_ServeHTTP(t *testing.T) {
 	expect(t, response.Code, http.StatusBadRequest)
 }
 
-func Test_Martini_Handlers(t *testing.T) {
+func TestMartiniHandlers(t *testing.T) {
 	result := ""
 	response := httptest.NewRecorder()
 
@@ -92,7 +92,7 @@ func Test_Martini_Handlers(t *testing.T) {
 	expect(t, response.Code, http.StatusBadRequest)
 }
 
-func Test_Martini_EarlyWrite(t *testing.T) {
+func TestMartiniEarlyWrite(t *testing.T) {
 	result := ""
 	response := httptest.NewRecorder()
 
@@ -115,7 +115,7 @@ func Test_Martini_EarlyWrite(t *testing.T) {
 	expect(t, response.Code, http.StatusOK)
 }
 
-func Test_Martini_Written(t *testing.T) {
+func TestMartiniWritten(t *testing.T) {
 	response := httptest.NewRecorder()
 
 	m := New()
@@ -130,7 +130,7 @@ func Test_Martini_Written(t *testing.T) {
 	expect(t, ctx.Written(), true)
 }
 
-func Test_Martini_Basic_NoRace(t *testing.T) {
+func TestMartiniBasicNoRace(t *testing.T) {
 	m := New()
 	handlers := []Handler{func() {}, func() {}}
 	// Ensure append will not realloc to trigger the race condition
@@ -142,4 +142,26 @@ func Test_Martini_Basic_NoRace(t *testing.T) {
 			m.ServeHTTP(response, req)
 		}()
 	}
+}
+
+func TestBreakHandlerStack(t *testing.T) {
+	m := Classic()
+
+	fn1 := func(c Context) string {
+		c.Break()
+		return "mid1"
+	}
+
+	fn2 := func(c Context) string {
+		return "mid2"
+	}
+
+	m.Get("/", fn1, fn2, func() string {
+		return "hello"
+	})
+
+	req, _ := http.NewRequest("GET", "/", nil)
+	resp := httptest.NewRecorder()
+	m.ServeHTTP(resp, req)
+	expect(t, resp.Body.String(), "mid1")
 }

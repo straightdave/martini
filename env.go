@@ -7,14 +7,15 @@ import (
 // Envs
 const (
 	Dev  string = "development"
-	Prod string = "production"
-	Test string = "test"
+	Prod        = "production"
+	Test        = "test"
 )
 
-// Env is the environment that Martini is executing in. The MARTINI_ENV is read on initialization to set this variable.
+// Env is the environment that Martini is executing in.
+// The MARTINI_ENV is read on initialization to set this variable.
 var Env = Dev
 
-// Root ...
+// Root is the rooted path name of current directory of the application.
 var Root string
 
 func setENV(e string) {

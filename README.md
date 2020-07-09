@@ -4,9 +4,13 @@
 
 > **NOTE**
 >
-> Forked from `github.com/go-martini/martini` which has magical powers to help
+> Forked from `github.com/straightdave/martini` which has magical powers to help
 > writing HTTP services quickly and effectively.
 > Its original repo is not maintained.
+
+> ** Update 2020-07-09 **
+>
+> Added `c.Break()` to `martini.Context` for middleware handlers to explicitly skip other handlers, as well as router.
 
 Martini is a powerful package for quickly writing modular web applications/services in Golang.
 
@@ -30,7 +34,7 @@ After installing Go and setting up your [GOPATH](http://golang.org/doc/code.html
 ~~~ go
 package main
 
-import "github.com/go-martini/martini"
+import "github.com/straightdave/martini"
 
 func main() {
   m := martini.Classic()
@@ -43,7 +47,7 @@ func main() {
 
 Then install the Martini package (**go 1.1** or greater is required):
 ~~~
-go get github.com/go-martini/martini
+go get github.com/straightdave/martini
 ~~~
 
 Then run your server:
@@ -61,7 +65,7 @@ Watch the [Demo Video](http://martini.codegangsta.io/#demo)
 
 Ask questions on Stackoverflow using the [martini tag](http://stackoverflow.com/questions/tagged/martini)
 
-GoDoc [documentation](http://godoc.org/github.com/go-martini/martini)
+GoDoc [documentation](http://godoc.org/github.com/straightdave/martini)
 
 
 ## Features
@@ -90,18 +94,18 @@ For more middleware and functionality, check out the repositories in the  [marti
 * [FAQ](#faq)
 
 ## Classic Martini
-To get up and running quickly, [martini.Classic()](http://godoc.org/github.com/go-martini/martini#Classic) provides some reasonable defaults that work well for most web applications:
+To get up and running quickly, [martini.Classic()](http://godoc.org/github.com/straightdave/martini#Classic) provides some reasonable defaults that work well for most web applications:
 ~~~ go
   m := martini.Classic()
   // ... middleware and routing goes here
   m.Run()
 ~~~
 
-Below is some of the functionality [martini.Classic()](http://godoc.org/github.com/go-martini/martini#Classic) pulls in automatically:
-  * Request/Response Logging - [martini.Logger](http://godoc.org/github.com/go-martini/martini#Logger)
-  * Panic Recovery - [martini.Recovery](http://godoc.org/github.com/go-martini/martini#Recovery)
-  * Static File serving - [martini.Static](http://godoc.org/github.com/go-martini/martini#Static)
-  * Routing - [martini.Router](http://godoc.org/github.com/go-martini/martini#Router)
+Below is some of the functionality [martini.Classic()](http://godoc.org/github.com/straightdave/martini#Classic) pulls in automatically:
+  * Request/Response Logging - [martini.Logger](http://godoc.org/github.com/straightdave/martini#Logger)
+  * Panic Recovery - [martini.Recovery](http://godoc.org/github.com/straightdave/martini#Recovery)
+  * Static File serving - [martini.Static](http://godoc.org/github.com/straightdave/martini#Static)
+  * Routing - [martini.Router](http://godoc.org/github.com/straightdave/martini#Router)
 
 ### Handlers
 Handlers are the heart and soul of Martini. A handler is basically any kind of callable function:
@@ -136,12 +140,12 @@ m.Get("/", func(res http.ResponseWriter, req *http.Request) { // res and req are
 })
 ~~~
 
-The following services are included with [martini.Classic()](http://godoc.org/github.com/go-martini/martini#Classic):
+The following services are included with [martini.Classic()](http://godoc.org/github.com/straightdave/martini#Classic):
   * [*log.Logger](http://godoc.org/log#Logger) - Global logger for Martini.
-  * [martini.Context](http://godoc.org/github.com/go-martini/martini#Context) - http request context.
-  * [martini.Params](http://godoc.org/github.com/go-martini/martini#Params) - `map[string]string` of named params found by route matching.
-  * [martini.Routes](http://godoc.org/github.com/go-martini/martini#Routes) - Route helper service.
-  * [martini.Route](http://godoc.org/github.com/go-martini/martini#Route) - Current active route.
+  * [martini.Context](http://godoc.org/github.com/straightdave/martini#Context) - http request context.
+  * [martini.Params](http://godoc.org/github.com/straightdave/martini#Params) - `map[string]string` of named params found by route matching.
+  * [martini.Routes](http://godoc.org/github.com/straightdave/martini#Routes) - Route helper service.
+  * [martini.Route](http://godoc.org/github.com/straightdave/martini#Route) - Current active route.
   * [http.ResponseWriter](http://godoc.org/net/http/#ResponseWriter) - http Response writer interface.
   * [*http.Request](http://godoc.org/net/http/#Request) - http Request.
 
@@ -181,7 +185,7 @@ m.NotFound(func() {
 Routes are matched in the order they are defined. The first route that
 matches the request is invoked.
 
-Route patterns may include named parameters, accessible via the [martini.Params](http://godoc.org/github.com/go-martini/martini#Params) service:
+Route patterns may include named parameters, accessible via the [martini.Params](http://godoc.org/github.com/straightdave/martini#Params) service:
 ~~~ go
 m.Get("/hello/:name", func(params martini.Params) string {
   return "Hello " + params["name"]
@@ -244,7 +248,7 @@ m.Run()
 ~~~
 
 #### Request-Level Mapping
-Mapping on the request level can be done in a handler via [martini.Context](http://godoc.org/github.com/go-martini/martini#Context):
+Mapping on the request level can be done in a handler via [martini.Context](http://godoc.org/github.com/straightdave/martini#Context):
 ~~~ go
 func MyCustomLoggerHandler(c martini.Context, req *http.Request) {
   logger := &MyCustomLogger{req}
@@ -262,8 +266,8 @@ func WrapResponseWriter(res http.ResponseWriter, c martini.Context) {
 ~~~
 
 ### Serving Static Files
-A [martini.Classic()](http://godoc.org/github.com/go-martini/martini#Classic) instance automatically serves static files from the "public" directory in the root of your server.
-You can serve from more directories by adding more [martini.Static](http://godoc.org/github.com/go-martini/martini#Static) handlers.
+A [martini.Classic()](http://godoc.org/github.com/straightdave/martini#Classic) instance automatically serves static files from the "public" directory in the root of your server.
+You can serve from more directories by adding more [martini.Static](http://godoc.org/github.com/straightdave/martini#Static) handlers.
 ~~~ go
 m.Use(martini.Static("assets")) // serve from the "assets" directory as well
 ~~~
@@ -310,7 +314,7 @@ m.Use(func(res http.ResponseWriter, req *http.Request) {
 ~~~
 
 ### Next()
-[Context.Next()](http://godoc.org/github.com/go-martini/martini#Context) is an optional function that Middleware Handlers can call to yield the until after the other Handlers have been executed. This works really well for any operations that must happen after an http request:
+[Context.Next()](http://godoc.org/github.com/straightdave/martini#Context) is an optional function that Middleware Handlers can call to yield the until after the other Handlers have been executed. This works really well for any operations that must happen after an http request:
 ~~~ go
 // log before and after a request
 m.Use(func(c martini.Context, log *log.Logger){
@@ -321,6 +325,23 @@ m.Use(func(c martini.Context, log *log.Logger){
   log.Println("after a request")
 })
 ~~~
+
+### Break()
+[Context.Break()](http://godoc.org/github.com/straightdave/martini#Context) is an optional function that Middleware Handlers can call to explicitly skip other handlers (including router):
+~~~ go
+// log before and after a request
+m.Use(func(c martini.Context, log *log.Logger){
+
+  // code works
+
+  c.Break()
+
+  // code works
+})
+~~~
+
+* No matter wherever `c.Break()` is written inside the handler, other code in the same handler would be executed as usual.
+* Handlers before this one will be not affected. Handlers after this one, including final router action, will be skipped.
 
 ## Martini Env
 
@@ -366,7 +387,8 @@ package hello
 
 import (
   "net/http"
-  "github.com/go-martini/martini"
+
+  "github.com/straightdave/martini"
 )
 
 func init() {

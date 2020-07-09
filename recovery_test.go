@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func Test_Recovery(t *testing.T) {
+func TestRecovery(t *testing.T) {
 	buff := bytes.NewBufferString("")
 	recorder := httptest.NewRecorder()
 
@@ -30,7 +30,7 @@ func Test_Recovery(t *testing.T) {
 	refute(t, len(buff.String()), 0)
 }
 
-func Test_Recovery_ResponseWriter(t *testing.T) {
+func TestRecoveryResponseWriter(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	recorder2 := httptest.NewRecorder()
 
