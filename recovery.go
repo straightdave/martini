@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/codegangsta/inject"
+	"github.com/straightdave/inject"
 )
 
 const (
-	panicHtml = `<html>
+	panicHTML = `<html>
 <head><title>PANIC: %s</title>
 <style type="text/css">
 html, body {
@@ -127,7 +127,7 @@ func Recovery() Handler {
 				var body []byte
 				if Env == Dev {
 					res.Header().Set("Content-Type", "text/html")
-					body = []byte(fmt.Sprintf(panicHtml, err, err, stack))
+					body = []byte(fmt.Sprintf(panicHTML, err, err, stack))
 				} else {
 					body = []byte("500 Internal Server Error")
 				}

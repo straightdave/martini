@@ -225,8 +225,10 @@ func newRoute(method string, pattern string, handlers []Handler) *route {
 	return &route
 }
 
+// RouteMatch ...
 type RouteMatch int
 
+// const values of RouteMatch
 const (
 	NoMatch RouteMatch = iota
 	StarMatch
@@ -234,11 +236,12 @@ const (
 	ExactMatch
 )
 
-//Higher number = better match
+// BetterThan tells Higher number = better match
 func (r RouteMatch) BetterThan(o RouteMatch) bool {
 	return r > o
 }
 
+// MatchMethod ...
 func (r route) MatchMethod(method string) RouteMatch {
 	switch {
 	case method == r.method:
@@ -252,6 +255,7 @@ func (r route) MatchMethod(method string) RouteMatch {
 	}
 }
 
+// Match ...
 func (r route) Match(method string, path string) (RouteMatch, map[string]string) {
 	// add Any method matching support
 	match := r.MatchMethod(method)
@@ -272,12 +276,14 @@ func (r route) Match(method string, path string) (RouteMatch, map[string]string)
 	return NoMatch, nil
 }
 
+// Validate ...
 func (r *route) Validate() {
 	for _, handler := range r.handlers {
 		validateHandler(handler)
 	}
 }
 
+// Handle ...
 func (r *route) Handle(c Context, res http.ResponseWriter) {
 	context := &routeContext{c, 0, r.handlers}
 	c.MapTo(context, (*Context)(nil))
@@ -299,7 +305,7 @@ func (r *route) URLWith(args []string) string {
 			} else {
 				val = m
 			}
-			i += 1
+			i++
 			return fmt.Sprintf(`%v`, val)
 		})
 
@@ -398,7 +404,7 @@ type routeContext struct {
 }
 
 func (r *routeContext) Next() {
-	r.index += 1
+	r.index++
 	r.run()
 }
 
@@ -409,7 +415,7 @@ func (r *routeContext) run() {
 		if err != nil {
 			panic(err)
 		}
-		r.index += 1
+		r.index++
 
 		// if the handler returned something, write it to the http response
 		if len(vals) > 0 {

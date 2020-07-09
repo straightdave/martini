@@ -1,20 +1,4 @@
 // Package martini is a powerful package for quickly writing modular web applications/services in Golang.
-//
-// For a full guide visit http://github.com/go-martini/martini
-//
-//  package main
-//
-//  import "github.com/go-martini/martini"
-//
-//  func main() {
-//    m := martini.Classic()
-//
-//    m.Get("/", func() string {
-//      return "Hello world!"
-//    })
-//
-//    m.Run()
-//  }
 package martini
 
 import (
@@ -23,7 +7,7 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/codegangsta/inject"
+	"github.com/straightdave/inject"
 )
 
 // Martini represents the top level web application. inject.Injector methods can be invoked to map services on a global level.
@@ -75,7 +59,7 @@ func (m *Martini) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	m.createContext(res, req).run()
 }
 
-// Run the http server on a given host and port.
+// RunOnAddr runs the http server on a given host and port.
 func (m *Martini) RunOnAddr(addr string) {
 	// TODO: Should probably be implemented using a new instance of http.Server in place of
 	// calling http.ListenAndServer directly, so that it could be stored in the martini struct for later use.
@@ -166,7 +150,7 @@ func (c *context) handler() Handler {
 }
 
 func (c *context) Next() {
-	c.index += 1
+	c.index++
 	c.run()
 }
 
@@ -180,7 +164,7 @@ func (c *context) run() {
 		if err != nil {
 			panic(err)
 		}
-		c.index += 1
+		c.index++
 
 		if c.Written() {
 			return

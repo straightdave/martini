@@ -1,9 +1,10 @@
 package martini
 
 import (
-	"github.com/codegangsta/inject"
 	"net/http"
 	"reflect"
+
+	"github.com/straightdave/inject"
 )
 
 // ReturnHandler is a service that Martini provides that is called

@@ -13,6 +13,8 @@ const (
 
 // Env is the environment that Martini is executing in. The MARTINI_ENV is read on initialization to set this variable.
 var Env = Dev
+
+// Root ...
 var Root string
 
 func setENV(e string) {

@@ -1,6 +1,12 @@
-# Martini  [![wercker status](https://app.wercker.com/status/9b7dbc6e2654b604cd694d191c3d5487/s/master "wercker status")](https://app.wercker.com/project/bykey/9b7dbc6e2654b604cd694d191c3d5487)[![GoDoc](https://godoc.org/github.com/go-martini/martini?status.png)](http://godoc.org/github.com/go-martini/martini)
+# Martini
 
-### **NOTE:** The martini framework is no longer maintained.
+[![GoDoc](https://godoc.org/github.com/straightdave/martini?status.png)](http://godoc.org/github.com/straightdave/martini)
+
+> **NOTE**
+>
+> Forked from `github.com/go-martini/martini` which has magical powers to help
+> writing HTTP services quickly and effectively.
+> Its original repo is not maintained.
 
 Martini is a powerful package for quickly writing modular web applications/services in Golang.
 
@@ -335,7 +341,7 @@ Start by looking in the [martini-contrib](https://github.com/martini-contrib) pr
 * [encoder](https://github.com/martini-contrib/encoder) - Encoder service for rendering data in several formats and content negotiation.
 * [gzip](https://github.com/martini-contrib/gzip) - Handler for adding gzip compress to requests
 * [gorelic](https://github.com/martini-contrib/gorelic) - NewRelic middleware
-* [logstasher](https://github.com/martini-contrib/logstasher) - Middleware that prints logstash-compatible JSON 
+* [logstasher](https://github.com/martini-contrib/logstasher) - Middleware that prints logstash-compatible JSON
 * [method](https://github.com/martini-contrib/method) - HTTP method overriding via Header or form fields.
 * [oauth2](https://github.com/martini-contrib/oauth2) - Handler that provides OAuth 2.0 login for Martini apps. Google Sign-in, Facebook Connect and Github login is supported.
 * [permissions2](https://github.com/xyproto/permissions2) - Handler for keeping track of users, login states and permissions.
@@ -343,7 +349,7 @@ Start by looking in the [martini-contrib](https://github.com/martini-contrib) pr
 * [secure](https://github.com/martini-contrib/secure) - Implements a few quick security wins.
 * [sessions](https://github.com/martini-contrib/sessions) - Handler that provides a Session service.
 * [sessionauth](https://github.com/martini-contrib/sessionauth) - Handler that provides a simple way to make routes require a login, and to handle user logins in the session
-* [strict](https://github.com/martini-contrib/strict) - Strict Mode 
+* [strict](https://github.com/martini-contrib/strict) - Strict Mode
 * [strip](https://github.com/martini-contrib/strip) - URL Prefix stripping.
 * [staticbin](https://github.com/martini-contrib/staticbin) - Handler for serving static files from binary data
 * [throttle](https://github.com/martini-contrib/throttle) - Request rate throttling middleware.
